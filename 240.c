@@ -12,36 +12,38 @@ int main(void){
         for(int j = 0; j < 4; j++)
             for(int k = 0; k < 2; k++)
                 scanf("%d", &arr[j][k]);     
-        
-        //找幾何中心
-        int avg[2] = { 0 , 0 };
-        for(int j = 0; j < 4; j++)
-            for(int k = 0; k < 2; k++)
-                avg[k] += arr[j][k];
-        avg[0] /= 4; 
-        avg[1] /= 4;            
-
-        //將座標改成中心到各點的向量
-        for(int j = 0; j < 4; j++)
-            for(int k = 0; k < 2; k++)
-                arr[j][k] -= avg[k];         
+        int center[2];
+        center[0] = arr[0][0];
+        center[1] = arr[0][1];
 
         //讓各點排成逆時針(由外積為正數判斷)
-        for(int x = 3; x > 0; x--)
-            for(int y = 0; y < x; y++){
-                int cross = 0;   
-                cross = arr[y][0] * arr[y+1][1] - arr[y][1] * arr[y+1][0];
-                if(cross < 0){
-                    int temp[2];
-                    temp[0] = arr[y][0];
-                    temp[1] = arr[y][1];
-                    arr[y][0] = arr[y+1][0];
-                    arr[y][1] = arr[y+1][1];
-                    arr[y+1][0] = temp[0];
-                    arr[y+1][1] = temp[1];
-                }
-            }
+        for(int j = 0; j < 4; j++)
+            for(int k = 0; k < 2; k++)
+                arr[j][k] -= center[k];
 
+        int cross1 = 0, cross2 = 0, cross3 = 0;   
+        cross1 = arr[1][0] * arr[2][1] - arr[1][1] * arr[2][0];
+        cross2 = arr[2][0] * arr[3][1] - arr[2][1] * arr[3][0];
+        cross3 = arr[1][0] * arr[3][1] - arr[1][1] * arr[3][0];
+        if((cross1 > 0 && cross2 < 0 && cross3 > 0) || (cross1 < 0 && cross2 > 0 && cross3 < 0)){
+            int temp[2];
+            temp[0] = arr[2][0];
+            temp[1] = arr[2][1];
+            arr[2][0] = arr[3][0];
+            arr[2][1] = arr[3][1];
+            arr[3][0] = temp[0];
+            arr[3][1] = temp[1];
+        }
+        else if((cross1 < 0 && cross2 > 0 && cross3 > 0) || (cross1 > 0 && cross2 < 0 && cross3 < 0)){
+            int temp[2];
+            temp[0] = arr[1][0];
+            temp[1] = arr[1][1];
+            arr[1][0] = arr[2][0];
+            arr[1][1] = arr[2][1];
+            arr[2][0] = temp[0];
+            arr[2][1] = temp[1];
+        }
+            
         //判斷是否邊長相等
         bool sameBase = 0;
         int base[4];
