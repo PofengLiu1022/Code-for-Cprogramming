@@ -5,18 +5,15 @@ typedef struct object {
     int value;
 } Obj;
  
-Obj better(Obj A, Obj B){
-    return (A.value > B.value)? A : B;
-}
- 
-Obj knapsack(int i, int N, Obj objects[N], Obj backpack){
-    if(i == N) return backpack;
+void knapsack(int i, int N, const int W, Obj objects[N], Obj backpack, int *value){
+    if(backpack.weight > W) return ;
+    *value = (backpack.value > *value)? backpack.value : *value;
     Obj placed;
-    if(backpack.weight < objects[i].weight) return knapsack(i + 1, N, objects, backpack);
-    placed.weight = backpack.weight - objects[i].weight;
+    placed.weight = backpack.weight + objects[i].weight;
     placed.value = backpack.value + objects[i].value;
-    return better(knapsack(i + 1, N, objects, backpack), 
-                    knapsack(i + 1, N, objects, placed));
+    if(i == N) return ;
+    knapsack(i + 1, N, W, objects, backpack, value), 
+    knapsack(i + 1, N, W, objects, placed, value);
 }
  
 int main(){
@@ -25,8 +22,10 @@ int main(){
     Obj objects[N];
     for(int i = 0; i < N; i++)
         scanf("%d%d", &(objects[i].weight), &(objects[i].value));
-    
-    Obj backpack = {W, 0};
-    Obj found = knapsack(0, N, objects, backpack);
-    printf("%d\n", found.value);
+ 
+    Obj backpack = {0, 0};
+    int value = 0;
+    knapsack(0, N, W, objects, backpack, &value);
+    printf("%d\n", value);
+    return 0;
 }
